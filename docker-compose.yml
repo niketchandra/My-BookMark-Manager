@@ -1,0 +1,30 @@
+version: "3.9"
+
+services:
+  db-container:
+    build: ./db-container
+    volumes:
+      - json-data:/data
+
+  api-container:
+    build: ./api-container
+    ports:
+      - "8000:8000"
+    volumes:
+      - json-data:/data
+    depends_on:
+      - db-container
+
+  fe-container:
+    build:
+      context: ./fe-container
+    ports:
+      - "3000:8000"
+    depends_on:
+      - api-container
+    volumes:
+      - ./fe-container:/var/www/html
+      - ./db-container/data:/var/www/html/storage/app/public
+
+volumes:
+  json-data:
